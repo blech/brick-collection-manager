@@ -1,0 +1,4 @@
+django==1.6.5
+south==1.0.0
+django-admin-bootstrapped==1.6.9
+
