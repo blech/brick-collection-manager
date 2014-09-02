@@ -55,15 +55,17 @@ class Command(BaseCommand):
         try:
             [y,m,d] = [int(x) for x in rowdict['DateAcquired'].split('-')]
         except:
-            if rowdict['DateAcquired'] != '':
-                warn("Datetime not parsed: '%s'" % rowdict['DateAcquired'])
+            # if rowdict['DateAcquired'] != '':
+            #     warn("Datetime not parsed: '%s'" % rowdict['DateAcquired'])
             [d,m,y] = [None,None,None]
             pass
 
         try:
             lego_set.date_acquired = datetime.date(day=d, month=m, year=y)
         except:
-            print "Datetime not valid: %s/%s/%s" % (d, m, y)
+            # warn("Datetime not valid: %s/%s/%s" % (d, m, y))
+            print "Could not parse %s - setting date_acquired to None" % rowdict['DateAcquired']
+            lego_set.date_acquired = None
             pass
 
         # if d and m and y and not 'Date' in rowdict:
@@ -83,8 +85,8 @@ class Command(BaseCommand):
 
         ### parse vendor information to chains / online
 
-        if 'ebay' in AF.lower() or 'bricklink' in AF.lower():
-            print "Online/Used vendor '%s'" %    rowdict['AcquiredFrom']
+        if '(ebay)' in AF.lower() or '(bricklink)' in AF.lower():
+            # print "Online/Used vendor '%s'" %    rowdict['AcquiredFrom']
             lego_set.online = True
             lego_set.used = True
 
@@ -92,7 +94,7 @@ class Command(BaseCommand):
             lego_set.vendor = AF.replace('('+lego_set.chain+')', '')
 
         if 'online' in AF or AF.endswith('com'):
-            print "Online vendor '%s'" %    rowdict['AcquiredFrom']
+            # print "Online vendor '%s'" %    rowdict['AcquiredFrom']
             lego_set.online = True
 
         if not lego_set.used:
@@ -118,7 +120,8 @@ class Command(BaseCommand):
 
         try:
             lego_set.save()
-            print "Saved set Brickset ID %s with our id %s" % (lego_set.collection_id, lego_set.id)
+            if created:
+                print "Created set Brickset ID %s with our id %s" % (lego_set.collection_id, lego_set.id)
         except Exception, e:
             print "Could not save Brickset ID %s (set %s): %s" % (rowdict['CollectionID'], rowdict['SetNumber'], e)
 
