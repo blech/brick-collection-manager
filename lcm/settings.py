@@ -89,7 +89,7 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
-
+TEMPLATE_DIRS = 'templates'
 
 REST_FRAMEWORK = {
     'PAGINATE_BY': 25

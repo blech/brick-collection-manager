@@ -32,3 +32,9 @@ class LegoSet(models.Model):
     chain =         models.CharField(max_length=32)
     vendor =        models.CharField(max_length=32)
 
+    def __unicode__(self):
+        return self.set_number
+
+    class Meta:
+        ordering = ('-date_acquired',)
+
