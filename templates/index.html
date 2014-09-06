@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <title>Brick Collection Manager</title>
+
+    <script src="http://d3js.org/d3.v3.js"></script>
+    <script src="http://d3js.org/queue.v1.js"></script>
+
+    <style>
+
+        .chart div {
+          font: 10px sans-serif;
+          background-color: steelblue;
+          text-align: right;
+          padding: 3px;
+          margin: 1px;
+          color: white;
+        }
+
+    </style>
+</head>
+<body>
+
+<div class="count chart" style="float:left;">
+</div>
+
+<div class="spent chart" style="float:left;">
+</div>
+
+<script>
+console.log("starting script")
+queue()
+    .defer(d3.json, "/api/by_month.json")
+    .await(ready);
+
+function ready(error, by_month) {
+    console.log(by_month);
+
+    d3.select(".count")
+      .selectAll("div")
+        .data(by_month)
+      .enter().append("div")
+        .style("width", function(d) { return d['count'] * 10 + "px"; })
+        .text(function(d) { return d['count']; });
+
+    d3.select(".spent")
+      .selectAll("div")
+        .data(by_month)
+      .enter().append("div")
+        .style("width", function(d) { return d['total_price'] + "px"; })
+        .text(function(d) { return d['total_price']; });
+}
+console.log("starting script")
+</script>
+
+</body>
+</html>

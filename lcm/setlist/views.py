@@ -3,6 +3,7 @@ from decimal import Decimal
 from django.db.models import *
 from django.http import Http404
 from django.shortcuts import render
+from django.views.generic.base import TemplateView
 
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -12,6 +13,9 @@ from .models import LegoSet
 from .serializers import LegoSetSerializer, LegoSetMonthSerializer, LegoSetChainSerializer
 
 TWOPLACES = Decimal(10)**-2
+
+class IndexView(TemplateView):
+    template_name = "index.html"
 
 class LegoSetList(APIView):
     """
