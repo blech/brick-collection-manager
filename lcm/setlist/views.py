@@ -81,8 +81,6 @@ class LegoSetChain(APIView):
 
             grouping.append(row)
 
-        print grouping
-
         serializer = LegoSetChainSerializer(grouping, many=True)
         return Response(serializer.data)
 
