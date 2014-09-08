@@ -1,4 +1,6 @@
 from django.db import models
+from django.utils.html import format_html
+from django.utils.http import urlencode
 
 class LegoSet(models.Model):
     collection_id = models.IntegerField(unique=True)
@@ -38,10 +40,30 @@ class LegoSet(models.Model):
     def __unicode__(self):
         return self.set_number
 
+    def _build_filter_link(self, filter, subfilter=None):
+        link = format_html("<a href='?{0}'>{1}</a>",
+                        urlencode({filter['field']: filter['value']}),
+                        filter.get('display') or filter['value'])
+
+        if subfilter:
+            link += ' / '
+            link += format_html("<a href='?{0}'>{1}</a>",
+                        urlencode({filter['field']: filter['value'], 
+                                   subfilter['field']: subfilter['value']}),
+                        subfilter.get('display') or subfilter['value'])
+
+        return link
+
     def bought(self):
-        return "%s (%s)" % (self.chain, self.vendor)
+        subfilter = False
+        if self.vendor:
+            subfilter = {'field': 'vendor', 'value': self.vendor,}
+        filter = {'field': 'chain', 'value': self.chain,}
+        return self._build_filter_link(filter, subfilter)
+
     bought.short_description = "Acquired From"
     bought.admin_order_field = 'chain'
+    bought.allow_tags = True
 
     def new(self):
         return not self.used
@@ -49,12 +71,16 @@ class LegoSet(models.Model):
     new.admin_order_field = 'used'
 
     def viewtheme(self):
+        subfilter = False
         if self.subtheme:
-            subtheme = self.subtheme
+            subfilter = {'field': 'subtheme', 'value': self.subtheme,}
             if '/' in self.subtheme:
-                subtheme = subtheme.replace('/', ' / ')
-            return "%s / %s" % (self.theme, subtheme)
-        return self.theme
+                subfilter['display'] = self.subtheme.replace('/', ' / ')
+
+        filter = {'field': 'theme', 'value': self.theme}
+
+        return self._build_filter_link(filter, subfilter)
+
     viewtheme.short_description = 'Theme / Subthemes'
     viewtheme.admin_order_field = 'theme'
     viewtheme.allow_tags = True
