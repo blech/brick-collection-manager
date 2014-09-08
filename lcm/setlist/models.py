@@ -32,9 +32,31 @@ class LegoSet(models.Model):
     chain =         models.CharField(max_length=32)
     vendor =        models.CharField(max_length=32)
 
+    class Meta:
+        ordering = ('-date_acquired',)
+
     def __unicode__(self):
         return self.set_number
 
-    class Meta:
-        ordering = ('-date_acquired',)
+    def bought(self):
+        return "%s (%s)" % (self.chain, self.vendor)
+    bought.short_description = "Acquired From"
+    bought.admin_order_field = 'chain'
+
+    def new(self):
+        return not self.used
+    new.boolean = True
+    new.admin_order_field = 'used'
+
+    def viewtheme(self):
+        if self.subtheme:
+            subtheme = self.subtheme
+            if '/' in self.subtheme:
+                subtheme = subtheme.replace('/', ' / ')
+            return "%s / %s" % (self.theme, subtheme)
+        return self.theme
+    viewtheme.short_description = 'Theme / Subthemes'
+    viewtheme.admin_order_field = 'theme'
+    viewtheme.allow_tags = True
+
 
