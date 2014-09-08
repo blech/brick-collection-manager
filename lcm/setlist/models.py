@@ -36,6 +36,7 @@ class LegoSet(models.Model):
 
     class Meta:
         ordering = ('-date_acquired',)
+        verbose_name = "Lego set"
 
     def __unicode__(self):
         return self.set_number
