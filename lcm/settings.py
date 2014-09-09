@@ -88,7 +88,7 @@ USE_TZ = True
 if DEBUG:
     # will output to your console
     logging.basicConfig(
-        level = logging.DEBUG,
+        level = logging.ERROR,
         format = '%(asctime)s %(levelname)s %(message)s',
     )
 
