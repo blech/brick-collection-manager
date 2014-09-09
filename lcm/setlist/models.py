@@ -71,6 +71,10 @@ class LegoSet(models.Model):
     new.boolean = True
     new.admin_order_field = 'used'
 
+    def price(self):
+        return "$%.2f" % self.total_price
+    price.admin_order_field = 'total_price'
+
     def viewtheme(self):
         subfilter = False
         if self.subtheme:
