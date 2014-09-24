@@ -4,55 +4,35 @@
     <meta charset="utf-8" />
     <title>Brick Collection Manager</title>
 
-    <script src="http://d3js.org/d3.v3.js"></script>
-    <script src="http://d3js.org/queue.v1.js"></script>
-
-    <style>
-
-        .chart div {
-          font: 10px sans-serif;
-          background-color: steelblue;
-          text-align: right;
-          padding: 3px;
-          margin: 1px;
-          color: white;
-        }
-
-    </style>
+    <link rel="stylesheet" href="/static/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/static/bootstrap/css/bootstrap-theme.min.css">
 </head>
 <body>
 
-<div class="count chart" style="float:left;">
-</div>
+  <div class="container">
+    <h1><b>{{ now|date:"E Y" }}</b> at a glance</h2>
 
-<div class="spent chart" style="float:left;">
-</div>
+    <h2>Spent <b>${{ spent.total_price__sum }}</b> on {{ this_month.count }} sets</h2>
 
-<script>
-console.log("starting script")
-queue()
-    .defer(d3.json, "/api/by_month.json")
-    .await(ready);
+    <p>Most spent on <b>{{ themes.max }}</b> (${{ themes.max_cost }}); 
+       most bought in <b>{{ themes.most }}</b> ({{ themes.most_count }} sets)</b></p>
 
-function ready(error, by_month) {
-    console.log(by_month);
+    <p>Most spent at <b>{{ chains.max }}</b> (${{ chains.max_cost }}); 
+       most bought in <b>{{ chains.most }}</b> ({{ chains.most_count }} sets)</b></p>
 
-    d3.select(".count")
-      .selectAll("div")
-        .data(by_month)
-      .enter().append("div")
-        .style("width", function(d) { return d['count'] * 10 + "px"; })
-        .text(function(d) { return d['count']; });
+    <p>Some recently unopened sets that you might want to build:</p>
+    <ul>{% for s in misb %}
+        <li><a href="http://brickset.com/sets/{{ s.set_number }}/">{{ s.set_number }}</a> 
+            <b>{{ s.set_name }}</b> ({{ s.theme }})</li>
+    {% endfor %}</ul>
+        
 
-    d3.select(".spent")
-      .selectAll("div")
-        .data(by_month)
-      .enter().append("div")
-        .style("width", function(d) { return d['total_price'] + "px"; })
-        .text(function(d) { return d['total_price']; });
-}
-console.log("starting script")
-</script>
+  </div>
+
+<!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+<!-- Include all compiled plugins (below), or include individual files as needed -->
+<script src="/static/bootstrap/js/bootstrap.min.js"></script>
 
 </body>
 </html>
