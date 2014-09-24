@@ -1,7 +1,6 @@
 #!/usr/bin/python
 
 import csv
-import datetime
 import decimal
 import json
 import os
@@ -10,6 +9,7 @@ import sys
 import urllib2
 
 from collections import defaultdict
+from datetime import date
 from warnings import warn
 
 from django.core.management.base import BaseCommand, CommandError
@@ -65,20 +65,12 @@ class Command(BaseCommand):
             pass
 
         try:
-            lego_set.date_acquired = datetime.date(day=d, month=m, year=y)
+            lego_set.date_acquired = date(day=d, month=m, year=y)
         except:
             # warn("Datetime not valid: %s/%s/%s" % (d, m, y))
             print "Could not parse %s - setting date_acquired to None" % rowdict['DateAcquired']
             lego_set.date_acquired = None
             pass
-
-        # if d and m and y and not 'Date' in rowdict:
-        #     try:
-        #         rowdict['Date'] = datetime.date(year=d, month=m, day=y)
-        #         # print "... valid in reverse format"
-        #     except:
-        #         warn("Datetime not valid: %s-%s-%s" % (d, m, y))
-        #         rowdict['Date'] = datetime.date(year=2011, month=1, day=1)
 
         ### set up additional fields
 

@@ -1,8 +1,7 @@
 #!/usr/bin/python
 
-import xmltodict
-import datetime
 import decimal
+import xmltodict
 
 from django.core.management.base import BaseCommand, CommandError
 from lcm.setlist.models import CatalogueSet
