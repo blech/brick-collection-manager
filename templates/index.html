@@ -1,3 +1,4 @@
+{% load mathfilters %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -13,6 +14,9 @@
     <h1><b>{{ now|date:"E Y" }}</b> at a glance</h2>
 
     <h2>Spent <b>${{ spent.total_price__sum }}</b> on {{ this_month.count }} sets</h2>
+
+    <p>That's {% if spent > then %}up{% else %}down {% endif %} <b>{{ change }}%</b> 
+        on last month (spent <b>${{ then.total_price__sum }}</b> in {{ last|date:"E" }}.)<p>
 
     <p>Most spent on <b>{{ themes.max }}</b> (${{ themes.max_cost }}); 
        most bought in <b>{{ themes.most }}</b> ({{ themes.most_count }} sets)</b></p>

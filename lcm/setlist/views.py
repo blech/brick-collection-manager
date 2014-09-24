@@ -1,4 +1,5 @@
-from datetime import datetime
+import datetime
+
 from decimal import Decimal
 
 from django.db.models import *
@@ -21,22 +22,52 @@ class IndexView(TemplateView):
     def get_context_data(self, **kwargs):
         context = super(IndexView, self).get_context_data(**kwargs)
 
-        now = datetime.datetime.now()
-        this_month = OwnedSet.objects.filter(
-                        date_acquired__year=now.year,
-                        date_acquired__month=now.month,
-                     )
-        spent = this_month.aggregate(Sum('total_price'), Avg('total_price'))
+        today = datetime.datetime.now().date()
+        first = datetime.date(day=1, month=today.month, year=today.year)
+        last = first - datetime.timedelta(days=1)
+
+        (this_month, spent) = self.get_month(first)
+        (last_month, then) = self.get_month(last)
 
         context.update({
-            'now': now,
+            'now': today,
+            'last': last,
             'this_month': this_month,
+            'last_month': last_month,
             'spent': spent,
+            'then': then,
+            'change': self.get_change(spent, then),
             'themes': self.get_themes(this_month),
             'chains': self.get_chains(this_month),
             'misb': self.get_misb(),
         })
         return context
+
+    def get_change(self, spent, then):
+        end = spent['total_price__sum']
+        start = then['total_price__sum']
+
+        if end > start:
+            # percentage rise
+            change = int(end*100/start)-100
+
+        if end == start:
+            change = 0
+
+        if end < start:
+            # percentage fall
+            percentage = end*100/start
+            change = int(100-percentage)
+
+        return change
+
+    def get_month(self, when):
+        this_month = OwnedSet.objects.filter(
+                        date_acquired__year=when.year,
+                        date_acquired__month=when.month,
+                     )
+        spent = this_month.aggregate(Sum('total_price'), Avg('total_price'))
+        return (this_month, spent)
 
     def get_themes(self, sets):
         grouping = []
