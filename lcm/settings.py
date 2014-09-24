@@ -44,6 +44,7 @@ INSTALLED_APPS = (
 
     'south',
     'rest_framework',
+    'mathfilters',
 
     'lcm.setlist',
 )
