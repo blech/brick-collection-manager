@@ -2,9 +2,9 @@ from django.db import models
 from django.utils.html import format_html
 from django.utils.http import urlencode
 
-class LegoSet(models.Model):
-    collection_id = models.IntegerField(unique=True)
-    set_number =    models.CharField(max_length=10, verbose_name="Set")
+class OwnedSet(models.Model):
+    collection_id = models.IntegerField(unique=True, verbose_name="Collection ID")
+    set_number =    models.CharField(max_length=10, verbose_name="Number")
     set_name =      models.CharField(max_length=128, verbose_name="Name")
     theme =         models.CharField(max_length=64)
     subtheme =      models.CharField(max_length=64)
@@ -36,7 +36,7 @@ class LegoSet(models.Model):
 
     class Meta:
         ordering = ('-date_acquired',)
-        verbose_name = "Lego set"
+        verbose_name = "Owned set"
 
     def __unicode__(self):
         return self.set_number
@@ -75,6 +75,10 @@ class LegoSet(models.Model):
         return "$%.2f" % self.total_price
     price.admin_order_field = 'total_price'
 
+    def set_thumb(self):
+        return "<img src='http://www.1000steine.com/brickset/thumbs/tn_%s_jpg.jpg'>" % self.set_number
+    set_thumb.allow_tags = True
+
     def viewtheme(self):
         subfilter = False
         if self.subtheme:
@@ -91,3 +95,52 @@ class LegoSet(models.Model):
     viewtheme.allow_tags = True
 
 
+class CatalogueSet(models.Model):
+    setID = models.IntegerField(verbose_name='Brickset ID')
+    number = models.CharField(max_length=10)
+    numberVariant = models.IntegerField(default=1)
+    setName = models.CharField(max_length=128, verbose_name='Name')
+    year = models.IntegerField(default=0)
+    theme = models.CharField(max_length=64)
+    subtheme = models.CharField(max_length=64, default='')
+    pieces = models.IntegerField(null=True)
+    minifigs = models.IntegerField(null=True)
+    image = models.BooleanField(default=False)
+    imageFilename = models.CharField(max_length=32, verbose_name="Image Filename")
+    thumbnailURL = models.URLField(verbose_name="Thumbnail URL")
+    imageURL = models.URLField(verbose_name="Image URL")
+    bricksetURL = models.URLField(verbose_name="Brickset URL")
+    own = models.BooleanField(default=False, verbose_name="Own?")
+    want = models.BooleanField(default=False, verbose_name="Want?")
+    qtyOwned = models.IntegerField(default=0, verbose_name="Owned")
+    userNotes = models.CharField(max_length=128, default='')
+    UKRetailPrice = models.DecimalField(max_digits=6, decimal_places=2, default="0.00")
+    USRetailPrice = models.DecimalField(max_digits=6, decimal_places=2, default="0.00")
+    CARetailPrice = models.DecimalField(max_digits=6, decimal_places=2, default="0.00")
+    instructionsAvailable = models.BooleanField(default=False, verbose_name="Instructions?")
+    EAN = models.CharField(max_length=16, default='')
+    UPC = models.CharField(max_length=16, default='')
+    lastUpdated = models.DateTimeField(null=True)
+
+    class Meta:
+        ordering = ('number', 'numberVariant')
+
+    def __unicode__(self):
+        return self.set_number()
+
+    def set_number(self):
+        return "%s-%s" % (self.number, self.numberVariant)
+    set_number.admin_order_field = 'number'
+    set_number.short_description = 'Set'
+
+    def viewtheme(self):
+        if self.subtheme:
+            subtheme = self.subtheme
+            if '/' in subtheme:
+                subtheme = subtheme.replace('/', ' / ')
+            return "%s / %s" % (self.theme, subtheme)
+        return self.theme
+
+    viewtheme.short_description = 'Theme / Subthemes'
+    viewtheme.admin_order_field = 'theme'
+    viewtheme.allow_tags = True

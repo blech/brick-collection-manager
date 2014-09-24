@@ -6,12 +6,14 @@ from lcm.setlist import views
 
 urlpatterns = patterns('',
     url(r'^$', views.IndexView.as_view()),
+    url(r'd3^$', views.dthreeView.as_view()),
 
-    url(r'^api/legosets$', views.LegoSetList.as_view()),
-    url(r'^api/legosets/(?P<pk>[0-9]+)/$', views.LegoSetDetail.as_view()),
+    url(r'^api/owned$', views.OwnedSetList.as_view()),
+    url(r'^api/owned/(?P<pk>[0-9]+)/$', views.OwnedSetDetail.as_view()),
 
-    url(r'^api/by_month$', views.LegoSetMonth.as_view()),
-    url(r'^api/by_chain$', views.LegoSetChain.as_view()),
+    url(r'^api/by_chain$', views.OwnedSetChain.as_view()),
+    url(r'^api/by_month$', views.OwnedSetMonth.as_view()),
+    url(r'^api/by_theme$', views.OwnedSetTheme.as_view()),
 
 )
 
