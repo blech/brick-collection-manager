@@ -19,18 +19,25 @@ TWOPLACES = Decimal(10)**-2
 
 class IndexView(TemplateView):
     template_name = "index.html"
+
     def get_context_data(self, **kwargs):
         context = super(IndexView, self).get_context_data(**kwargs)
 
-        today = datetime.datetime.now().date()
-        first = datetime.date(day=1, month=today.month, year=today.year)
+        if not 'year' in kwargs and not 'month' in kwargs:
+            today = datetime.datetime.now().date()
+            first = datetime.date(day=1, month=today.month, year=today.year)
+        else:
+            first = datetime.date(
+                        day=1,
+                        month=int(kwargs['month']),
+                        year=int(kwargs['year']))
         last = first - datetime.timedelta(days=1)
 
         (this_month, spent) = self.get_month(first)
         (last_month, then) = self.get_month(last)
 
         context.update({
-            'now': today,
+            'now': first,
             'last': last,
             'this_month': this_month,
             'last_month': last_month,
