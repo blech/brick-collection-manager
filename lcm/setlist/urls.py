@@ -7,6 +7,7 @@ from lcm.setlist import views
 urlpatterns = patterns('',
     url(r'^$', views.IndexView.as_view()),
     url(r'^glance/(?P<year>\d+)/(?P<month>\d+)$', views.IndexView.as_view()),
+    url(r'^sets/(?P<year>\d+)/(?P<month>\d+)$', views.SetsMonthView.as_view()),
     url(r'd3^$', views.dthreeView.as_view()),
 
     url(r'^api/owned$', views.OwnedSetList.as_view()),

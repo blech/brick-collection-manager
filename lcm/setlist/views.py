@@ -142,6 +142,9 @@ class IndexView(TemplateView):
         misb = OwnedSet.objects.filter(condition_now="MISB")[:8]
         return misb
 
+class SetsMonthView(IndexView):
+    template_name = "sets.html"
+
 class dthreeView(TemplateView):
     template_name = "d3.html"
 

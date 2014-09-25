@@ -1,0 +1,37 @@
+{% load mathfilters %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <title>Sets {{ now|date:"M Y" }} | Brick Collection Manager</title>
+
+    <link rel="stylesheet" href="/static/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/static/bootstrap/css/bootstrap-theme.min.css">
+</head>
+<body>
+
+  <div class="container">
+    <h1><b>{{ now|date:"F Y" }}</b>: {{ this_month.count }} sets</h2>
+
+    <ul>
+    {% for s in this_month %}
+        <li><a href="http://brickset.com/sets/{{ s.set_number }}/">{{ s.set_number }}</a> 
+            <b>{{ s.set_name }}</b> ({{ s.theme }}{% if s.subtheme %} / {{ s.subtheme }}{% endif %})<br>
+            {% if s.new %}New{% else %}Used {% endif %}
+            {% if s.chain %} at {{ s.chain }}{% if s.vendor %} ({{ s.vendor }}){% endif %}{% endif %}
+            for ${{ s.total_price|stringformat:".2f" }}
+        </li>
+    {% endfor %}
+    </ul>
+
+    <p>Total spent was <b>${{ spent.total_price__sum }}</b></p>
+
+  </div>
+
+<!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+<!-- Include all compiled plugins (below), or include individual files as needed -->
+<script src="/static/bootstrap/js/bootstrap.min.js"></script>
+
+</body>
+</html>
