@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8" />
-    <title>Summary | Brick Collection Manager</title>
+    <title>{{ now|date:"M Y" }} At A Glance | Brick Collection Manager</title>
 
     <link rel="stylesheet" href="/static/bootstrap/css/bootstrap.min.css">
     <link rel="stylesheet" href="/static/bootstrap/css/bootstrap-theme.min.css">
@@ -11,9 +11,11 @@
 <body>
 
   <div class="container">
-    <h1><b>{{ now|date:"E Y" }}</b> at a glance</h2>
+    <h1><b>{{ now|date:"F Y" }}</b> at a glance</h2>
 
-    <h2>Spent <b>${{ spent.total_price__sum }}</b> on {{ this_month.count }} sets</h2>
+    <h2>Spent <b>${{ spent.total_price__sum }}</b> on
+    {# TODO use urls/reverse for this URL #}
+        <a href="/sets/{{ now|date:"Y" }}/{{ now|date:"m" }}">{{ this_month.count }} sets</a></h2>
 
     <p>That's 
         {% if spent.total_price__sum > then.total_price__sum %}
@@ -22,7 +24,9 @@
             down
         {% endif %} 
         <b>{{ change }}%</b> on last month 
-        (spent <b>${{ then.total_price__sum }}</b> in {{ last|date:"E" }}.)<p>
+        (spent <b>${{ then.total_price__sum }}</b> in 
+    {# TODO use urls/reverse for this URL #}
+        <a href="/glance/{{ last|date:"Y" }}/{{ last|date:"m" }}">{{ last|date:"F" }}</a>)</p>
 
     <p>Most spent on <b>{{ themes.max }}</b> (${{ themes.max_cost }}); 
        most bought in <b>{{ themes.most }}</b> ({{ themes.most_count }} sets)</b></p>
