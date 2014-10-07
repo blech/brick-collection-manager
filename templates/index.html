@@ -13,26 +13,44 @@
   <div class="container">
     <h1><b>{{ now|date:"F Y" }}</b> at a glance</h2>
 
-    <h2>Spent <b>${{ spent.total_price__sum }}</b> on
-    {# TODO use urls/reverse for this URL #}
-        <a href="/sets/{{ now|date:"Y" }}/{{ now|date:"m" }}">{{ this_month.count }} sets</a></h2>
+    {% if spent %}
 
-    <p>That's 
-        {% if spent.total_price__sum > then.total_price__sum %}
-            <b>up</b>
-        {% else %}
-            down
-        {% endif %} 
-        <b>{{ change }}%</b> on last month 
-        (spent <b>${{ then.total_price__sum }}</b> in 
-    {# TODO use urls/reverse for this URL #}
-        <a href="/glance/{{ last|date:"Y" }}/{{ last|date:"m" }}">{{ last|date:"F" }}</a>)</p>
+        <h2>Spent <b>${{ spent.total_price__sum }}</b> on
+        {# TODO use urls/reverse for this URL #}
+            <a href="/sets/{{ now|date:"Y" }}/{{ now|date:"m" }}">{{ this_month.count }} sets</a></h2>
 
-    <p>Most spent on <b>{{ themes.max }}</b> (${{ themes.max_cost }}); 
-       most bought in <b>{{ themes.most }}</b> ({{ themes.most_count }} sets)</b></p>
+        <p>That's 
+            {% if spent.total_price__sum > then.total_price__sum %}
+                <b>up</b>
+            {% else %}
+                down
+            {% endif %} 
+            {% if change %}<b>{{ change }}%</b>{% endif %} on last month 
+            (spent {% if change %}<b>${{ then.total_price__sum }}</b>{% else %}nothing{% endif %} in 
+        {# TODO use urls/reverse for this URL #}
+            <a href="/glance/{{ last|date:"Y" }}/{{ last|date:"m" }}">{{ last|date:"F" }}</a>)</p>
 
-    <p>Most spent at <b>{{ chains.max }}</b> (${{ chains.max_cost }}); 
-       most bought in <b>{{ chains.most }}</b> ({{ chains.most_count }} sets)</b></p>
+        <p>Most spent on <b>{{ themes.max }}</b> (${{ themes.max_cost }}); 
+           most bought in <b>{{ themes.most }}</b> ({{ themes.most_count }} sets)</b></p>
+
+        <p>Most spent at <b>{{ chains.max }}</b> (${{ chains.max_cost }}); 
+           most bought in <b>{{ chains.most }}</b> ({{ chains.most_count }} sets)</b></p>
+
+    {% else %}
+        <h2>No sets (yet?) this month.</h2>
+    {% endif %}
+
+    {% if last_month %}
+        <p>(spent <b>${{ then.total_price__sum }}</b> in 
+        {# TODO use urls/reverse for this URL #}
+            <a href="/glance/{{ last|date:"Y" }}/{{ last|date:"m" }}">{{ last|date:"F" }}</a>)</p>
+    {% else %}
+        {% if not spent %}
+            <p>(Nothing spent in 
+            {# TODO use urls/reverse for this URL #}
+                <a href="/glance/{{ last|date:"Y" }}/{{ last|date:"m" }}">{{ last|date:"F" }}</a>)</p>
+        {% endif %}
+    {% endif %}
 
     <p>Some recently unopened sets that you might want to build:</p>
     <ul>{% for s in misb %}

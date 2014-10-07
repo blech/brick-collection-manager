@@ -36,6 +36,18 @@ class IndexView(TemplateView):
         (this_month, spent) = self.get_month(first)
         (last_month, then) = self.get_month(last)
 
+        if this_month:
+            if last_month:
+                change = self.get_change(spent, then)
+            else:
+                change = None
+
+            themes = self.get_themes(this_month)
+            chains = self.get_chains(this_month)
+
+        else:
+            themes = chains = change = None
+        
         context.update({
             'now': first,
             'last': last,
@@ -43,16 +55,20 @@ class IndexView(TemplateView):
             'last_month': last_month,
             'spent': spent,
             'then': then,
-            'change': self.get_change(spent, then),
-            'themes': self.get_themes(this_month),
-            'chains': self.get_chains(this_month),
+            'change': change,
+            'themes': themes,
+            'chains': chains,
             'misb': self.get_misb(),
         })
+
         return context
 
     def get_change(self, spent, then):
         end = spent['total_price__sum']
         start = then['total_price__sum']
+
+        if not end or not start:
+            return 0
 
         if end > start:
             # percentage rise
@@ -73,6 +89,8 @@ class IndexView(TemplateView):
                         date_acquired__year=when.year,
                         date_acquired__month=when.month,
                      )
+        if not this_month:
+            return (None, None)
         spent = this_month.aggregate(Sum('total_price'), Avg('total_price'))
         return (this_month, spent)
 
